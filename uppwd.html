@@ -1,0 +1,141 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>修改密码</title>
+<style type="text/css">
+#submit{
+	display: block;
+	background-color: #3366ff;
+	color: white;
+	text-align:center;
+	font-size: 14px;
+	line-height:30px;
+	text-decoration:none;
+}
+body{
+	padding: 20% 30% 30% 30%;
+}
+.form{
+	border: 1px solid #d9dce2;
+	text-align: center;
+}
+.form .form_head{
+	background-color: #3366ff;
+	text-align: center;
+}
+.form .form_head h2{
+	margin-top: 0;
+	color: #fff;
+}
+.form .form_data{
+	text-align: center;
+}
+
+
+</style>
+</head>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<body>
+<div class="form">
+	<div class="form_head">
+		<h2>修改密码</h3>
+	</div>
+	<div class="form_data">
+		账号：
+		<input name="u" type="text" value="<?= $res['value'] ?>" />
+		<br/><br/>
+
+		旧密码：
+		<input name="old_p" type="password" />
+		<br/><br/>
+
+		新密码：
+		<input name="p" type="password" />
+		<br/><br/>
+
+		确认新密码：
+		<input name="sp" type="password" />
+		<br/><br/>
+
+		<a id="submit" href="javascript:;">提交</a>
+	</div>
+</div>
+<div style="height: 1px; width: 100%; background-color: #BEBEBE; margin: 15px 0 0 0;"></div>
+
+
+	
+<script type="text/javascript">
+
+
+        $('#submit').click(function(){
+
+        	//前端两次密码验证
+        	if($("[name=p]").val()!=$("[name=sp]").val()){
+                alert("新密码不一致!!!"); 
+				return false;
+            }  
+
+            //前端数据验证
+        	f=new Array("[name=u]","[name=old_p]","[name=p]");
+			fname=new Array("账号","旧密码","新密码");
+			limit_min_lenth=new Array(6,6,6);
+			limit_max_lenth=new Array(15,15,15);
+			for(var i=0;i<f.length;i++)
+			{
+				//禁空
+				if($(f[i]).val()==""){
+					alert(fname[i]+"不允许为空!");
+					return false;
+				}
+				//限制长度
+				if($(f[i]).val().length>limit_max_lenth[i] || $(f[i]).val().length<limit_min_lenth[i]){
+					alert(fname[i]+"长度请控制在"+limit_min_lenth[i]+'至'+limit_max_lenth[i]);
+					return false;
+				}
+				//限制输入仅为字母和数字
+				if(/^[\w]*$/.test($(f[i]).val())==false){
+					alert(fname[i]+"只允许为字母和数字");
+					return false;
+				}
+			}
+				
+			
+           
+
+            //提交数据
+        	var formdata = new FormData();
+        	formdata.append('u',$('[name=u]').val());
+        	formdata.append('old_p',$('[name=old_p]').val());
+        	formdata.append('p',$('[name=p]').val());
+        	
+        	$.ajax({
+	        	url:'uppwd.php',
+	        	type:'POST',
+	        	data:formdata,
+	        	datatype:"json",
+	        	//async: false,  
+	            cache: false, 
+	            contentType: false, //不设置发送数据的类型
+	            processData: false, //自动序列化
+	        	success:function(res){
+	        		//console.log(res);
+	        		res=JSON.parse(res);
+	        		if(res.err_code==0){
+	        			alert(res.msg);
+	        			location.href=res.data;
+	        		}
+	        		else{
+	        			alert(res.msg);
+	        		}
+	        		
+	        	},
+	        	error:function(){
+	        		console.log('error');
+	        	}
+	        });
+        });
+        
+</script>
+
+</body>
+</html>

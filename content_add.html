@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>文章发布</title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+<style type="text/css">
+a{
+	text-decoration: none;
+}
+#submit{
+	display: block;
+	background-color: #3366ff;
+	width: 150px;
+	height: 30px;
+	color: white;
+	text-align:center;
+	font-size: 14px;
+	line-height:30px;
+	text-decoration:none;
+}
+.abtn{
+	display: block;
+	background-color: #3366ff;
+	width: 150px;
+	height: 30px;
+	color: white;
+	text-align:center;
+	font-size: 14px;
+	line-height:30px;
+	text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+<input type="hidden" id="if_up" value="<?= isset($_GET['id'])?$_GET['id']:'' ?>">
+<div class="container-fuild">
+	<div class="row">
+
+		<div class="col-2" style="background-color: #007bff;">	
+			<nav class="navbar navbar-expand-sm bg-primary navbar-dark" style="width: 100%; margin: 0;">
+			  <ul class="navbar-nav">
+			    <li class="nav-item active">
+			      <a class="nav-link" href="content_list.php">文章管理</a>
+			    </li>
+			  </ul>
+			</nav>	
+
+			<div style="height: 1px; width: 100%; background-color: #BEBEBE;"></div>
+
+			<nav class="navbar navbar-expand-sm bg-primary navbar-dark" style="width: 100%; margin: 0;">
+			  <ul class="navbar-nav">
+			    <li class="nav-item active">
+			      <a class="nav-link" href="uppwd.php">修改密码</a>
+			    </li>
+			  </ul>
+			</nav>	
+
+			<div style="height: 1px; width: 100%; background-color: #BEBEBE;"></div>
+		</div>
+
+
+		<div class="col-10">
+			
+			<div class="row" style="position: relative;">
+
+			<a class="abtn" href="login.php?logout=1" style="position:absolute; right: 10px; top: 10px; width: 100px;">退出登录</a>
+
+			  <div style="margin-left: 15px; margin-top:10px;">
+			  	<h2>文章管理</h2>
+				  <ul class="nav">
+				    <li class="nav-item">
+				      <a class="nav-link" href="content_list.php">首页</a>
+				    </li>
+				    <li class="nav-item">
+				      <span class="nav-link">/</span>
+				    </li>
+				    <li class="nav-item">
+				      <a class="nav-link" href="content_list.php">文章管理</a>
+				    </li>
+				    <li class="nav-item">
+				      <span class="nav-link">/</span>
+				    </li>
+				    <li class="nav-item">
+				      <a class="nav-link" href="content_add.php">文章添加</a>
+				    </li>  
+				  </ul>
+			  </div>
+			</div>
+
+			<div style="height: 1px; width: 100%; background-color: #BEBEBE; margin-bottom: 15px;"></div>
+
+			<div class="row">
+				<div class="col-12">
+					<div class="form-group">
+				    	<label for="input-title"><span style="color: red">*</span>标题:</label>
+				    	<input name="title" type="text" class="form-control" id="input-title" value="<?= isset($res['title'])?$res['title']:'' ?>">
+				  	</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+					<div class="form-group">
+				    	<label for="input-sender">发送者名称:</label>
+				    	<input name="sender" type="text" class="form-control" id="input-sender" value="<?= isset($res['sender'])?$res['sender']:'' ?>">
+				  	</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+					<div class="form-group">
+				    	<label for="input-sender_link">发送者名称跳转链接:</label>
+				    	<input name="sender_link" type="text" class="form-control" id="input-sender_link" value="<?= isset($res['sender_link'])?$res['sender_link']:'' ?>">
+				  	</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+					<div class="form-group">
+				    	<label for="input-readall_link">阅读全文跳转链接:</label>
+				    	<input name="readall_link" type="text" class="form-control" id="input-sender_link" value="<?= isset($res['readall_link'])?$res['readall_link']:'' ?>">
+				  	</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-12">
+				  	<label for="input-img">尾部广告图:</label>
+            		<div class="col-sm-2">
+                		<div class="thumbnail" style="width: 80px; height: 80px; ">
+						<img src="<?= isset($res['default_advertising'])?cc_domain().$res['default_advertising']:'./add-img.jpg' ?>" width="80" height="80" />
+						<!--
+						<img src="<?= isset($res['default_advertising'])?$_SERVER['HTTP_HOST'].$res['default_advertising']:'./add-img.jpg' ?>" width="80" height="80" />
+						-->
+						</div>
+						<input type="file" title="上传单个图片" name="img" class="myFile pic_1" data-mul="0" style="position: absolute; left: 0px; top: 0px;  font-size: 118px; margin: 0px; padding: 0px; cursor: pointer; opacity: 0; height: 100%; width: 100%; overflow: hidden;" />
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="default_advertising" value="<?= isset($res['default_advertising'])?$res['default_advertising']:'' ?>">
+
+			<div style="height: 20px;"></div>
+
+			<div class="row">
+				<div class="col-12">
+					<span style="color: red">*</span>
+					<!-- 加载编辑器的容器 -->
+					<script id="container" name="details" type="text/plain">
+					<?= isset($res['details'])?$res['details']:'' ?>
+					</script>
+				</div>
+			</div>
+
+
+
+			<div class="row">
+				<div class="col-12">
+					<div><a id="submit" href="javascript:;" style="float: right; bottom: 3px">发布</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<input type="hidden" name="st" value="<?= $st ?>">
+
+
+<script type="text/javascript" src="./ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="./ueditor/ueditor.all.js"></script>
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+var editor = UE.getEditor('container');
+</script>
+
+	
+<script type="text/javascript">
+var c=0;//提交次数变量，防止重复提交
+
+        $('#submit').click(function(){
+        
+        	//前端图片验证
+        	/*
+        	var img=$('[name=h]').get(0).files[0];
+        	var limit_size_m=1;
+        	var limit_type=new Array('image/jpeg','image/gif','image/png');
+        	if(img.size>limit_size_m*1024*1024){
+        		alert('请控制头像图片大小在'+limit_size_m+'M以内'); 
+				return false;
+        	}
+        	if(limit_type.indexOf(img.type)<0){
+        		alert('不支持该图片格式'); 
+				return false;
+        	}
+        	console.log(img);
+        	*/
+
+
+        	
+            //前端数据验证
+        	f=new Array("[name=title]","[name=sender]","[name=sender_link]","[name=readall_link]");
+			fname=new Array("标题","发送者","发送者名称跳转链接","阅读全文跳转链接");
+			limit_min_lenth=new Array(2,0,0,0,0);
+			limit_max_lenth=new Array(30,10,100,100,1000);
+			for(var i=0;i<f.length;i++)
+			{
+				//禁空
+				if(f[i]=="[name=title]" && $(f[i]).val()==""){
+					alert(fname[i]+"不允许为空!");
+					return false;
+				}
+				//限制长度
+				if($(f[i]).val().length>limit_max_lenth[i] || $(f[i]).val().length<limit_min_lenth[i]){
+					alert(fname[i]+"长度请控制在"+limit_min_lenth[i]+'至'+limit_max_lenth[i]);
+					return false;
+				}
+				//检测是否网址链接格式
+				if((f[i]=="[name=sender_link]" || f[i]=="[name=readall_link]") && $(f[i]).val()!='' && /(\w+):\/\/([^/:]+)(:\d*)?([^# ]*)/.test($(f[i]).val())==false){
+					alert(fname[i]+"格式错误,链接头部请加上http://或https://等协议头");
+					return false;
+				}
+			}
+			
+			
+            //提交次数验证
+        	c++;
+        	if(c!=1)return false;
+
+            //提交数据
+        	var formdata = new FormData();
+        	formdata.append('title',$('[name=title]').val());
+        	formdata.append('sender',$('[name=sender]').val());
+        	formdata.append('sender_link',$('[name=sender_link]').val());
+        	formdata.append('readall_link',$('[name=readall_link]').val());
+        	formdata.append('details',editor.getContent());
+        	formdata.append('default_advertising',$('[name=default_advertising]').val());
+
+        	formdata.append('st',$('[name=st]').val());
+        	console.log(editor.getContent());
+        	if($('#if_up').val()==''){
+        		var uurl='content_add.php';
+        	}
+        	else{
+        		var uurl='content_add.php?id='+$('#if_up').val();
+        	}
+        	$.ajax({
+	        	url:uurl,
+	        	type:'POST',
+	        	data:formdata,
+	        	datatype:"json",
+	        	//async: false,  
+	            cache: false, 
+	            contentType: false, //不设置发送数据的类型
+	            processData: false, //自动序列化
+	        	success:function(res){
+	        		res=JSON.parse(res);
+	        		if(res.err_code==0){
+	        			console.log(res);
+	        			alert(res.msg);
+	        			location.href='content_list.php';
+	        		}
+	        		else{
+	        			console.log(res);
+	        			alert(res.msg);
+	        			location.reload();
+	        		}
+	        		
+	        	},
+	        	error:function(){
+	        		console.log('error');
+	        	}
+	        });
+        });
+        //$('#submit').click结束
+
+
+        $(".myFile").change(function() {
+		var filepath = $(this).get(0).files[0].name;
+		console.log(this.files);
+		//格式验证
+		var extStart = filepath.lastIndexOf(".");
+		var ext = filepath.substring(extStart, filepath.length).toUpperCase()
+		if(ext != ".BMP" && ext != ".PNG" && ext != ".GIF" && ext != ".JPG" && ext != ".JPEG" && ext != ".PJPEG" && ext != ".X-PNG") {
+			HXMsgbox.show("系统仅支持jpg/jpeg/png/pjpeg/gif/bmp/x-png格式的图片！");
+			//$(".img_div").html("");
+			return false;
+		}
+		//end格式验证
+		
+		//文件大小
+        var filesize = $(this).get(0).files[0].size;
+        if(filesize > 1024*1024*1){
+			HXMsgbox.show("图片大小不能超过1M！");
+			//$(".img_div").html("");
+			return false;
+        }
+
+        //提交数据
+        	var formdata = new FormData();
+        	
+
+        	formdata.append('img',$(this).get(0).files[0]);
+        	console.log($(this).get(0).files[0]);
+        	$.ajax({
+	        	url:'deal_tail_advertising.php',
+	        	type:'POST',
+	        	data:formdata,
+	        	datatype:"json",
+	        	//async: false,  
+	            cache: false, 
+	            contentType: false, //不设置发送数据的类型
+	            processData: false, //自动序列化
+	        	success:function(res){
+	        		console.log(res);
+	        		res=JSON.parse(res);
+	        		if(res.err_code==0){
+	        			console.log(res);
+	        			alert(res.msg);
+	        			$('[name=default_advertising]').val(res.data);
+	        			console.log($('[name=default_advertising]').val());
+	        		}
+	        		else{
+	        			alert(res.msg);
+	        		}
+	        		
+	        	},
+	        	error:function(){
+	        		console.log('error');
+	        	}
+	        });		
+		
+		objUrl = getObjectURL(this.files[0]);
+		console.log(objUrl);
+		$(this).prev().children('img').attr('src',objUrl);
+	});
+        //$(".myFile").change结束
+
+/*鉴定每个浏览器上传图片url 目前没有合并到Ie* */
+	function getObjectURL(file) {
+		var url = null;
+		if(window.createObjectURL != undefined) { // basic
+			url = window.createObjectURL(file);
+		} else if(window.URL != undefined) { // mozilla(firefox)
+			url = window.URL.createObjectURL(file);
+		} else if(window.webkitURL != undefined) { // webkit or chrome
+			url = window.webkitURL.createObjectURL(file);
+		}
+		
+		return url;
+	}
+        
+</script>
+
+</body>
+</html>

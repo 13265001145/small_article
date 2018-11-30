@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>文章列表</title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+<style type="text/css">
+a{
+	text-decoration: none;
+}
+#add{
+	display: block;
+	background-color: #3366ff;
+	width: 150px;
+	height: 30px;
+	color: white;
+	text-align:center;
+	font-size: 14px;
+	line-height:30px;
+	text-decoration:none;
+}
+.abtn{
+	display: block;
+	background-color: #3366ff;
+	width: 150px;
+	height: 30px;
+	color: white;
+	text-align:center;
+	font-size: 14px;
+	line-height:30px;
+	text-decoration:none;
+}
+#modal{
+	position: fixed; 
+	width: 100%; 
+	height: 100%; 
+	background-color: #404040; 
+	opacity:0.5; 
+	z-index: 8888; 
+	text-align: center; 
+	vertical-align: middle; 
+	display:none;
+	top:0;
+	left:0;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container-fuild">
+	<div class="row" style="min-height:600px">
+
+		<div class="col-2" style="background-color: #007bff;">	
+			<nav class="navbar navbar-expand-sm bg-primary navbar-dark" style="width: 100%; margin: 0;">
+			  <ul class="navbar-nav">
+			    <li class="nav-item active">
+			      <a class="nav-link" href="content_list.php">文章管理</a>
+			    </li>
+			  </ul>
+			</nav>	
+
+			<div style="height: 1px; width: 100%; background-color: #BEBEBE;"></div>
+
+			<nav class="navbar navbar-expand-sm bg-primary navbar-dark" style="width: 100%; margin: 0;">
+			  <ul class="navbar-nav">
+			    <li class="nav-item active">
+			      <a class="nav-link" href="uppwd.php">修改密码</a>
+			    </li>
+			  </ul>
+			</nav>	
+
+			<div style="height: 1px; width: 100%; background-color: #BEBEBE;"></div>
+		</div>
+
+
+		<div class="col-10">
+
+			<div class="row" style="position: relative;">
+
+			<a class="abtn" href="login.php?logout=1" style="position:absolute; right: 10px; top: 10px; width: 100px;">退出登录</a>
+
+			  <div style="margin-left: 15px; margin-top:10px;">
+			  	<h2>文章管理</h2>
+				  <ul class="nav">
+				    <li class="nav-item">
+				      <a class="nav-link" href="content_list.php">首页</a>
+				    </li>
+				    <li class="nav-item">
+				      <span class="nav-link">/</span>
+				    </li>
+				    <li class="nav-item">
+				      <a class="nav-link" href="content_list.php">文章管理</a>
+				    </li>
+				    <li class="nav-item">
+				      <span class="nav-link">/</span>
+				    </li>
+				    <li class="nav-item">
+				      <a class="nav-link" href="content_list.php">文章列表</a>
+				    </li>  
+				    <li class="nav-item">
+				      <a id="add" href="content_add.php">发布文章</a>
+				    </li>  
+				  </ul>
+			  </div>
+			 
+			</div>
+
+			<div style="height: 1px; width: 100%; background-color: #BEBEBE; margin-bottom: 15px;"></div>
+
+			<div class="row">
+				<div class="col-12">
+					<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>标题</th>
+								<th>发送者</th>
+								<th>点击量</th>
+								<th>发送日期</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<?php foreach($res as $k => $v){ ?>
+							<tr>
+								<td><a href="<?= cc_domain() ?>/wx_content/wx_content.php?c_id=<?= $v['id'] ?>"><?= $v['title'] ?></a></td>
+								<td><?= $v['sender'] ?></td>
+								<td><?= $v['click_num'] ?></td>
+								<td>点赞量</td>
+								<td><?= date('Y-m-d H:i:s',$v['id']) ?></td>
+								<td>
+									<a class="share" href="javascript:;" data-link="<?= cc_domain() ?>/wx_content/wx_content.php?c_id=<?= $v['id'] ?>">分享</a>
+									<a href="content_add.php?id=<?= $v['id'] ?>">修改</a>
+									<a href="javascript:del(<?= $v['id'] ?>);">删除</a>
+								</td>
+							</tr>
+							<?php } ?>
+
+							
+							
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="5">
+										<?= $arr['html'] ?>
+								</td>
+							</tr>
+						</tfoot>
+						
+					</table>
+				</div>
+				  	
+
+			   </div><!-- end of col-12  -->
+			</div><!-- end of row  -->
+
+
+			
+
+		</div>
+
+	</div>
+</div>
+
+<div id="modal" ></div>
+<div id="qrcode" style="position: fixed; margin:auto; left:0; right:0; top:0; bottom:0; z-index:8999; width: 200px; height: 200px;"></div>
+
+
+
+
+	
+<script type="text/javascript">
+function del(id){
+	$.ajax({
+	    url:'content_del.php?id='+id,
+	    datatype:"json",
+	    //async: false,  
+	    cache: false, 
+	    contentType: false, //不设置发送数据的类型
+	 	processData: false, //自动序列化
+	    success:function(res){
+	    	res=JSON.parse(res);
+	        if(res.err_code==0){
+	        	console.log(res);
+	        	alert(res.msg);
+	        	location.reload();
+	        }
+	        else{
+	        	alert(res.msg);
+	       	}  		
+	    },
+	    error:function(){
+	        	console.log('error');
+	    }
+	});
+}
+
+$('.share').click(function(){
+	//console.log($(this).attr('data-link'));
+	 $('#modal').css('display','block');
+	 jQuery('#qrcode').qrcode({
+	 	width:200,
+	 	height:200,
+	 	text:$(this).attr('data-link')
+	 });
+	 
+});
+
+
+$('#modal').on('click',function(){
+	//alert('asd');
+	$(this).css('display','none');
+	$('#qrcode').empty();
+});
+
+
+
+</script>
+
+</body>
+</html>

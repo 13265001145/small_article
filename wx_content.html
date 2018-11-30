@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title><?= $res['title'] ?></title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+<style type="text/css">
+a{
+	text-decoration: none;
+	color: #576b95;
+}
+a:hover{
+    text-decoration: none!important;
+}
+#submit{
+	display: block;
+	background-color: #3366ff;
+	width: 150px;
+	height: 30px;
+	color: white;
+	text-align:center;
+	font-size: 14px;
+	line-height:30px;
+	text-decoration:none;
+}
+.details *{
+	max-width: 100%;
+}
+#modal{
+	position: fixed; 
+	width: 100%; 
+	height: 100%; 
+	background-color: #404040; 
+	opacity:0.5; 
+	z-index: 8888; 
+	text-align: center; 
+	vertical-align: middle; 
+	display:none;
+	top:0;
+	left:0;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<h2 style="font-size: 22px; margin-top: 20px;"><?= $res['title'] ?></h2>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<div style="float: left;"><a href="<?= $res['sender_link'] ?>"><?= $res['sender'] ?></a></div>
+			<div id='publish_time' style="float: left; color: rgba(0,0,0,0.3);margin-left: 12px;">
+			</div>
+		</div>
+	</div>
+
+
+	<div style="height: 10px;"></div>
+<!--
+	<div class="row">
+		<div class="col-12">
+			<img width="100%" src="./images/head_advertising.PNG">
+		</div>
+	</div>
+-->
+	<div class="row">
+		<div class="col-12 details">
+			<?= $res['details'] ?>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12" style="padding-left: auto;padding-right: auto;">
+			<!--<img width="100%" src="./images/tail_advertising.PNG">-->
+			<?php if(strcmp(cc_domain(),$res['default_advertising'])!=0){ ?>
+			<img width="100%" src="<?= $res['default_advertising'] ?>">
+			<?php } ?>
+		</div>
+	</div>
+
+
+	<div style="height: 30px;"></div>
+
+	<div class="row">
+		<div class="col-12">
+			<?php if(strcmp($res['readall_link'],'#')!=0){ ?>
+			<div style="float: left; margin-right: 20px;"><a href="<?= $res['readall_link'] ?>">阅读全文</a></div>
+			<?php } ?>
+			<div style="float: left; color: rgba(0,0,0,0.3);">阅读 <?= $res['click_num'] ?>
+			</div>
+			<div id="praise" style="float: right; width: 35px; height: 21px; text-align: left;">
+				<div style="float: left; width: 25px; height: 21px;">
+					<img id="praise_img" src="" width="25" height="21"/>
+				</div>
+				<div id="praise_num" style="color:#333399;float: left;"><?= $res['praise_num'] ?>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div style="height: 10px;"></div>
+
+	
+			
+			<div style="position: fixed; right: 50%; bottom: 0; width: 50px; height: 50px;">
+				<!--<a id="submit" href="javascript:;" style="float: right; bottom: 3px">更换尾部广告图</a>-->
+				<input type="file" title="上传单个图片" name="img" class="myFile pic_1" data-mul="0" style="position: fixed; right:50%; bottom: 0px;  font-size: 118px; margin: 0px; padding: 0px; cursor: pointer; opacity: 0; width: 50px; height: 50px; overflow: hidden;" />
+			</div>
+	
+</div>
+
+
+
+
+<div style="height: 30px;"></div>
+<input type="hidden" id="c_id" value="<?= $res['id'] ?>">
+
+
+
+<div id="modal"></div>
+<div id="quanquan" style="position: fixed; margin:auto; left:0; right:0; top:0; bottom:0; z-index:8999; width: 90px; height: 90px; display: none;">
+	<img src="./load.gif" />
+</div>
+
+
+
+
+	
+<script type="text/javascript">
+
+wx_time();//发布时间处理
+
+//点赞处理
+var storage=window.localStorage;
+
+if((storage.getItem($('#c_id').val())!=null || storage.getItem($('#c_id').val())!='null') && storage.getItem($('#c_id').val())==1){//已点赞
+	$('#praise_img').attr('src','./praise_yes.PNG');
+}
+else{//未点赞
+	$('#praise_img').attr('src','./praise_no.png');
+}
+
+
+
+
+
+
+
+
+
+        $('[name=img]').change(function(){
+        	$('#modal').css('display','block');
+        	$('#quanquan').css('display','block');
+        
+        	//前端图片验证
+        	var img=$(this).get(0).files[0];
+        	var limit_size_m=1;
+        	var limit_type=new Array('image/jpeg','image/gif','image/png');
+        	if(img.size>limit_size_m*1024*1024){
+        		alert('请控制广告图片大小在'+limit_size_m+'M以内'); 
+
+        		$('#modal').css('display','none');
+        		$('#quanquan').css('display','none');
+				return false;
+        	}
+        	if(limit_type.indexOf(img.type)<0){
+        		alert('不支持该图片格式'); 
+
+        		$('#modal').css('display','none');
+        		$('#quanquan').css('display','none');
+				return false;
+        	}
+        	
+
+            
+            //提交数据
+        	var formdata = new FormData();
+        	formdata.append('img',$(this).get(0).files[0]);
+        	
+        	$.ajax({
+	        	url:'deal_tail_advertising.php?c_id='+$('#c_id').val(),
+	        	type:'POST',
+	        	data:formdata,
+	        	datatype:"json",
+	        	//async: false,  
+	            cache: false, 
+	            contentType: false, //不设置发送数据的类型
+	            processData: false, //自动序列化
+	        	success:function(res){
+	        		res=JSON.parse(res);
+	        		if(res.err_code==0){
+	        			console.log(res);
+	        		//	alert(res.msg);
+	        			location.href=location.origin+location.pathname+'?c_id='+$('#c_id').val()+'&i_id='+res.data;
+	        		}
+	        		else{
+	        			alert(res.msg);
+	        			$('#modal').css('display','none');
+        				$('#quanquan').css('display','none');
+	        		}
+	        		
+	        	},
+	        	error:function(){
+	        		console.log('error');
+	        	}
+	        });
+        });
+
+
+        $('#praise').click(function(){
+
+        	$.ajax({
+	        	url:'praise.php?c_id='+$('#c_id').val()+'&if_praise='+storage.getItem($('#c_id').val()),
+	        	datatype:"json",
+	        	//async: false,  
+	            cache: false, 
+	            contentType: false, //不设置发送数据的类型
+	            processData: false, //自动序列化
+	        	success:function(res){
+	        		res=JSON.parse(res);
+	        		if(res.err_code==0){
+	        			console.log(res);
+	        			$('#praise_num').text(res.data);
+
+	        			var current_src=$('#praise_img').attr('src');
+			        	if(current_src=='./praise_no.png'){
+			        		$('#praise_img').attr('src','./praise_yes.PNG');
+			        		storage.setItem($('#c_id').val(),1);
+			        	}
+			        	else{
+			        		$('#praise_img').attr('src','./praise_no.png');
+			        		storage.removeItem($('#c_id').val());
+			        	}
+	        		}
+	        		else{
+	        			alert(res.msg);
+	        		}
+	        		
+	        	},
+	        	error:function(){
+	        		console.log('error');
+	        	}
+	        });
+        });
+
+
+
+function wx_time(){
+    if (window.__second_open__) return; 
+
+    var first_js_time = +new Date();
+
+    var showDate="";
+    var svrDate=new Date("<?= time() ?>"*1000);
+    var createDate=new Date("<?= $res['id'] ?>"*1000);
+    var ct="<?= $res['id'] ?>"*1;
+    var publish_time = "<?= date('Y-m-d',$res['id']) ?>" || "";
+    var cD={
+      year:createDate.getYear(),
+      month:createDate.getMonth()+1,
+      date:createDate.getDate()
+    };
+    
+    svrDate.setHours(0);
+    svrDate.setMinutes(0);
+    svrDate.setSeconds(0);
+    var todayDate=svrDate.getTime()/1000;
+    svrDate.setDate(1);
+    svrDate.setMonth(0);
+    var yearDate=svrDate.getTime()/1000;
+    
+    if(ct>=todayDate){
+      showDate="今天";
+    
+    }else if(ct>=todayDate-60*60*24){
+       showDate="昨天";
+    
+    }else if(ct>=todayDate-2*60*60*24){
+      showDate="前天";
+    }else if(ct>=todayDate-3*60*60*24){
+      showDate="3天前";
+    }else if(ct>=todayDate-4*60*60*24){
+      showDate="4天前";
+    }else if(ct>=todayDate-5*60*60*24){
+      showDate="5天前";
+    }else if(ct>=todayDate-6*60*60*24){
+      showDate="6天前";
+    }else if(ct>=todayDate-2*7*60*60*24){
+      showDate="1周前";
+    }else if(ct>=yearDate){
+      var tmp = publish_time.split('-');
+      showDate = parseInt(tmp[1]) + '月' + parseInt(tmp[2]) + '日';
+      
+      
+      
+    }else{
+      showDate=publish_time;
+    };
+    if(document.getElementById("publish_time")){
+      document.getElementById("publish_time").innerText=showDate;
+    }
+}
+
+
+        
+</script>
+
+</body>
+</html>
